@@ -29,6 +29,8 @@ const RepeatableReferenceField = (props: FieldProps) => {
   const referenceKey = instanceParameters.referenceKey || "id";
   const textKey = instanceParameters.textKey || "text";
   const textLabel = instanceParameters.textLabel || "Text";
+  const textKey2 = instanceParameters.textKey2 || "textAdditional";
+  const textLabel2 = instanceParameters.textLabel2 || "Additional Text";
   const contentTypes = instanceParameters.contentTypes
     ? instanceParameters.contentTypes.split(/\s*,\s*/g)
     : null;
@@ -78,11 +80,12 @@ const RepeatableReferenceField = (props: FieldProps) => {
     const sanitizedRows = rows.map((row) => {
       const sanitizedRow = {};
       sanitizedRow[textKey] = row[textKey];
+      sanitizedRow[ textKey2 ] = row[ textKey2 ];
       sanitizedRow[referenceKey] = row[referenceKey];
       return sanitizedRow;
     });
     props.sdk.field.setValue(sanitizedRows);
-  }, [rows, props.sdk.field, referenceKey, textKey]);
+  }, [rows, props.sdk.field, referenceKey, textKey, textKey2]);
 
   // open entry selection dialog and append selected entries to the end of our list
   const onAddButtonClicked = () => {
@@ -101,6 +104,7 @@ const RepeatableReferenceField = (props: FieldProps) => {
             };
 
             rowData[textKey] = "";
+            rowData[textKey2] = "";
             rowData[referenceKey] = row.sys.id;
             return rowData;
           }),
@@ -118,6 +122,13 @@ const RepeatableReferenceField = (props: FieldProps) => {
     updatedRows[rowIndex][textKey] = e.target.value;
     setRows(updatedRows);
   };
+
+  const onText2Changed = e => {
+    const rowIndex = e.target.dataset.index;
+    const updatedRows = [ ...rows ];
+    updatedRows[ rowIndex ][ textKey2 ] = e.target.value;
+    setRows( updatedRows );
+  }
 
   // remove ingredient from list
   const onDeleteButtonClicked = (passedRow) => {
@@ -175,6 +186,14 @@ const RepeatableReferenceField = (props: FieldProps) => {
                                     placeholder={textLabel}
                                     data-index={index}
                                     onChange={onTextChanged}
+                                  ></TextInput>
+                                </div>
+                                <div>
+                                  <TextInput
+                                    value={row[textKey2]}
+                                    placeholder={textLabel2}
+                                    data-index={index}
+                                    onChange={onText2Changed}
                                   ></TextInput>
                                 </div>
                                 <div style={{ width: "200px" }}>
